@@ -21,7 +21,7 @@ def main
   response = nil
   attachments = []
   routes = Hash.new{|hash, key| hash[key] = []}
-  routes = SETTING['Members'].each_with_object(routes) {|m, h| m['Routes'].each {|r| h[r] << m['Name'] } }
+  routes = SETTING['Members'].each_with_object(routes) {|m, h| m['Routes'].each {|r| h[r] << m['UserId'] } }
 
   connection = Faraday::Connection.new do |builder|
     builder.use Faraday::Request::UrlEncoded
@@ -47,7 +47,7 @@ def main
     names = routes[tr.css('a').inner_html]
     attachments << { title: ":train: #{tr.css('.colTrouble').inner_html}",
                      text: tr.css('td:last-child').inner_html,
-                     pretext: "#{tr.css('a').inner_html} （#{names.join(',')}）",
+                     pretext: "#{tr.css('a').inner_html} <@#{names.join('> <@')}>",
                      color: '#ff7f50' }
   end
   return if attachments.size.zero?
