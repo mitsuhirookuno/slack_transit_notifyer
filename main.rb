@@ -5,6 +5,9 @@ require 'webmock'
 require 'vcr'
 require 'slack-notifier'
 require 'dotenv/load'
+require 'holiday_jp'
+
+exit if HolidayJp.holiday?(Date.today)
 
 VCR.configure do |c|
   c.cassette_library_dir = 'tmp/cache/vcr'
@@ -12,9 +15,13 @@ VCR.configure do |c|
   c.allow_http_connections_when_no_cassette = true
 end
 
+SETTING = YAML.load(open('setting.yaml').read)
+
 def main
   response = nil
   attachments = []
+  routes = Hash.new{|hash, key| hash[key] = []}
+  routes = SETTING['Members'].each_with_object(routes) {|m, h| m['Routes'].each {|r| h[r] << m['Name'] } }
 
   connection = Faraday::Connection.new do |builder|
     builder.use Faraday::Request::UrlEncoded
@@ -35,10 +42,13 @@ def main
   troubles = html.css('.elmTblLstLine.trouble')
   troubles.css('tr').each do |tr|
     next unless tr.css('th').size.zero?
-    attachments << {title: ':train: ' + tr.css('.colTrouble').inner_html,
-                    text: tr.css('td:last-child').inner_html,
-                    pretext: tr.css('a').inner_html,
-                    color: "#ff7f50" }
+    next unless routes.keys.include?(tr.css('a').inner_html)
+
+    names = routes[tr.css('a').inner_html]
+    attachments << { title: ":train: #{tr.css('.colTrouble').inner_html}",
+                     text: tr.css('td:last-child').inner_html,
+                     pretext: "#{tr.css('a').inner_html} （#{names.join(',')}）",
+                     color: '#ff7f50' }
   end
   return if attachments.size.zero?
   notifier = Slack::Notifier.new(ENV['CX_SLACK_WEBHOOK_URL'],
