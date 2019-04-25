@@ -20,8 +20,8 @@ SETTING = YAML.load(open('setting.yaml').read)
 def main
   response = nil
   attachments = []
-  routes = Hash.new{|hash, key| hash[key] = []}
-  routes = SETTING['Members'].each_with_object(routes) {|m, h| m['Routes'].each {|r| h[r] << m['UserId'] } }
+  routes = Hash.new {|hash, key| hash[key] = []}
+  routes = SETTING['Members'].each_with_object(routes) {|m, h| m['Routes'].each {|r| h[r] << m['UserId']}}
 
   connection = Faraday::Connection.new do |builder|
     builder.use Faraday::Request::UrlEncoded
@@ -45,15 +45,17 @@ def main
     next unless routes.keys.include?(tr.css('a').inner_html)
 
     names = routes[tr.css('a').inner_html]
-    attachments << { title: ":train: #{tr.css('.colTrouble').inner_html}",
-                     text: tr.css('td:last-child').inner_html,
-                     pretext: "#{tr.css('a').inner_html} <@#{names.join('> <@')}>",
-                     color: '#ff7f50' }
+    attachments << {title: ":train: #{tr.css('.colTrouble').inner_html}",
+                    text: tr.css('td:last-child').inner_html,
+                    pretext: "#{tr.css('a').inner_html} <@#{names.join('> <@')}>",
+                    color: '#ff7f50'}
   end
   return if attachments.size.zero?
   notifier = Slack::Notifier.new(ENV['CX_SLACK_WEBHOOK_URL'],
                                  channel: ENV['NOTIFY_CHANNEL'],
-                                 link_names: true)
+                                 icon_emoji: ':fukurouchan:',
+                                 link_names: true,
+                                 username: '交通情報梟')
   notifier.ping(':warning: 以下の路線に遅延が発生しています :warning: ', attachments: attachments)
 end
 
