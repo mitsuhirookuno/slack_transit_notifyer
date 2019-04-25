@@ -40,7 +40,8 @@ def main
   notifier = Slack::Notifier.new(ENV['CX_SLACK_WEBHOOK_URL'],
                                  channel: ENV['NOTIFY_CHANNEL'],
                                  icon_emoji: ':fukurouchan:',
-                                 link_names: true)
+                                 link_names: true,
+                                 username: 'お天気梟')
   notifier.ping(":thermometer: #{max_temperature}〜#{min_temperature} :thermometer:")
   exit if rainfall_rate < 40
   notifier.ping(":umbrella: #{description} :umbrella:")
