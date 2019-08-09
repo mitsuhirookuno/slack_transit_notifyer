@@ -46,13 +46,13 @@ def main
     end
 
     notifier = Slack::Notifier.new(ENV['CX_SLACK_WEBHOOK_URL'],
-                                   channel: ENV['ATLASSIAN_NOTIFY_CHANNEL'],
+                                   channel: ARGV[0] || ENV['ATLASSIAN_NOTIFY_CHANNEL'],
                                    icon_emoji: ':fukurouchan:',
                                    link_names: true,
                                    username: 'Dev作業進捗フクロウ')
     notifier.ping('', attachments: attachments)
     notifier = Slack::Notifier.new(ENV['CX_SLACK_WEBHOOK_URL'],
-                                   channel: ENV['ATLASSIAN_NOTIFY_CHANNEL'],
+                                   channel: ARGV[0] || ENV['ATLASSIAN_NOTIFY_CHANNEL'],
                                    icon_emoji: ':fukurouchan:',
                                    link_names: true,
                                    username: 'Dev作業進捗フクロウ')
