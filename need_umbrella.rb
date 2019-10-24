@@ -37,11 +37,10 @@ def main
   max_temperature, min_temperature = html.css('section.today-weather > div > div > div.weather-icon-box > p.indexes-weather-date-value').inner_text.scan(/\d+℃/)
   rainfall_rate = html.css('section.today-weather > div > div > div.indexes-icon-box > span').inner_text.to_i
   description = html.css('section.today-weather > div > p').inner_text
-  notifier = Slack::Notifier.new(ENV['CX_SLACK_WEBHOOK_URL'],
+  notifier = Slack::Notifier.new(ENV['SLACK_WEBHOOK_URL'],
                                  channel: ENV['NOTIFY_CHANNEL'],
-                                 icon_emoji: ':fukurouchan:',
                                  link_names: true,
-                                 username: 'お天気梟')
+                                 username: 'baymax')
   notifier.ping(":thermometer: #{max_temperature}〜#{min_temperature} :thermometer:")
   exit if rainfall_rate < 40
   notifier.ping(":umbrella: #{description} :umbrella:")

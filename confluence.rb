@@ -45,22 +45,20 @@ def main
         end
     end
 
-    notifier = Slack::Notifier.new(ENV['CX_SLACK_WEBHOOK_URL'],
+    notifier = Slack::Notifier.new(ENV['SLACK_WEBHOOK_URL'],
                                    channel: ARGV[0] || ENV['ATLASSIAN_NOTIFY_CHANNEL'],
-                                   icon_emoji: ':fukurouchan:',
                                    link_names: true,
-                                   username: 'Dev作業進捗フクロウ')
+                                   username: 'baymax')
     notifier.ping('', attachments: attachments)
-    notifier = Slack::Notifier.new(ENV['CX_SLACK_WEBHOOK_URL'],
+    notifier = Slack::Notifier.new(ENV['SLACK_WEBHOOK_URL'],
                                    channel: ARGV[0] || ENV['ATLASSIAN_NOTIFY_CHANNEL'],
-                                   icon_emoji: ':fukurouchan:',
                                    link_names: true,
-                                   username: 'Dev作業進捗フクロウ')
+                                   username: 'baymax')
     notifier.ping(<<-EOS)
     ```
 詳細は以下を参照して下さい
 https://fukurou-labo.atlassian.net/wiki/spaces/DEV/pages/65208323/DEV
-    ````
+    ```
     EOS
 end
 

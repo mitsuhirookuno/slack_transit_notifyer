@@ -51,11 +51,10 @@ def main
                     color: '#ff7f50'}
   end
   return if attachments.size.zero?
-  notifier = Slack::Notifier.new(ENV['CX_SLACK_WEBHOOK_URL'],
+  notifier = Slack::Notifier.new(ENV['SLACK_WEBHOOK_URL'],
                                  channel: ENV['NOTIFY_CHANNEL'],
-                                 icon_emoji: ':fukurouchan:',
                                  link_names: true,
-                                 username: '交通情報梟')
+                                 username: 'baymax')
   notifier.ping(':warning: 以下の路線に遅延が発生しています :warning: ', attachments: attachments)
 end
 
